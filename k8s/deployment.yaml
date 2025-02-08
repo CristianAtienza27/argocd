@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-app
+  labels:
+    app: argocd-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: argocd-app
+  template:
+    metadata:
+      labels:
+        app: argocd-app
+    spec:
+      containers:
+        - name: argocd-app
+          image: tuusuario/argocd:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-app-service
+spec:
+  selector:
+    app: argocd-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
